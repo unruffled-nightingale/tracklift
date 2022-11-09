@@ -1,0 +1,28 @@
+name: test application on pr
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test-application:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"
+    - run: |
+        pip install -U pip
+        pip install poetry
+        poetry install
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+    - run: |
+        make check-all
+    - run: |
+        make test-integration
+        make test-unit
